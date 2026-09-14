@@ -1,0 +1,14 @@
+# Core Framework & API
+Django>=5.1,<6.0
+djangorestframework>=3.15.2
+djangorestframework-simplejwt>=5.3.1
+django-cors-headers>=4.4.0
+django-environ>=0.11.2
+
+# Database (PostgreSQL 3 binary adapter)
+psycopg[binary]>=3.2.1
+
+# Caching & Asynchronous Tasks (Redis & Celery)
+redis>=5.0.8
+django-redis>=5.4.0
+celery>=5.4.0

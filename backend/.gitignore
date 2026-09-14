@@ -1,0 +1,77 @@
+# ==============================================================================
+# Cartify Backend .gitignore
+# ==============================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.env
+.env.*
+!.env.example
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Django media and collected staticfiles
+media/
+staticfiles/
+
+# Database files (if any local sqlite testing)
+*.sqlite3
+*.sqlite3-journal
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Logs
+*.log
+
+# Unit test / coverage reporting
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# IDE & OS files
+.DS_Store
+.idea/
+.vscode/
