@@ -106,8 +106,16 @@ Cartify/
 
 ## Planned Applications & Modules
 
-- [x] **Module 1.1**: Project & Repository Foundation (Current)
-- [ ] **Module 1.2**: Core Backend Infrastructure & Production Settings
+- [x] **Module 1**: Project & Architecture Foundation (Complete)
+  - [x] 1.1 Project & Repository Foundation
+  - [x] 1.2 Backend Foundation & Modular Apps
+  - [x] 1.3 PostgreSQL Database Foundation
+  - [x] 1.4 REST API Foundation (/api/v1/ & /api/health/)
+  - [x] 1.5 Next.js Website Foundation
+  - [x] 1.6 Redis + Celery Foundation
+  - [x] 1.7 Security Foundation
+  - [x] 1.8 Testing Foundation
+  - [x] 1.9 Final Foundation Verification
 - [ ] **Module 2**: Authentication & User Identity Management
 - [ ] **Module 3**: Category & Product Catalog Engine
 - [ ] **Module 4**: Cart & Wishlist System
@@ -143,9 +151,19 @@ The web application is built with Next.js App Router:
 
 ---
 
-## Setup Instructions (Placeholder)
+## Verification & Quality Checks
 
-Detailed local development setup instructions will be provided in upcoming modules as runtime services are configured.
+Run all verification checks across backend and website with a single command:
 
-- **Prerequisites**: Python 3.12+, Node.js 20+, PostgreSQL 16+, Redis 7+
-- **Documentation**: See [docs/development/](docs/development/README.md) for workflow details.
+```bash
+bash scripts/run-all-checks.sh
+```
+
+This runs:
+1. Django standard system checks (`python manage.py check`)
+2. Django production deployment security audit (`python manage.py check --deploy`)
+3. Full backend unit, security & performance test suite (`python manage.py test common.tests`)
+4. Next.js TypeScript type checking (`npm run type-check`)
+5. Next.js ESLint linting (`npm run lint`)
+6. Next.js component & API client tests via Vitest (`npm run test`)
+7. Next.js production build (`npm run build`)

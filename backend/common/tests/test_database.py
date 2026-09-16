@@ -1,7 +1,10 @@
 """Automated test suite for PostgreSQL database integration, ORM transactions, and constraints."""
-from django.test import TestCase, TransactionTestCase
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.db import connection, transaction
-from django.contrib.auth.models import User, Group
+from django.test import TestCase, TransactionTestCase
+
+User = get_user_model()
 
 
 class PostgreSQLConnectionTests(TestCase):
@@ -22,9 +25,8 @@ class PostgreSQLConnectionTests(TestCase):
     def test_relational_constraints_and_foreign_keys(self):
         """Verify relational integrity through foreign key relations."""
         user = User.objects.create_user(
-            username='db_test_user',
             email='db_test@cartify.internal',
-            password='SecurePassword123!'
+            password='SecurePassword123!',
         )
         group = Group.objects.create(name='TestGroup')
         user.groups.add(group)
@@ -41,22 +43,23 @@ class PostgreSQLTransactionTests(TransactionTestCase):
         try:
             with transaction.atomic():
                 User.objects.create_user(
-                    username='rollback_candidate',
-                    email='rollback@cartify.internal'
+                    email='rollback@cartify.internal',
+                    password='Password123!',
                 )
                 raise ValueError("Simulated failure to trigger transaction rollback")
         except ValueError:
             pass
 
-        self.assertFalse(User.objects.filter(username='rollback_candidate').exists())
+        self.assertFalse(User.objects.filter(email='rollback@cartify.internal').exists())
 
     def test_atomic_transaction_commit(self):
         """Verify that a successful atomic block commits changes to the database."""
         with transaction.atomic():
             user = User.objects.create_user(
-                username='commit_candidate',
-                email='commit@cartify.internal'
+                email='commit@cartify.internal',
+                password='Password123!',
             )
 
-        self.assertTrue(User.objects.filter(username='commit_candidate').exists())
+        self.assertTrue(User.objects.filter(email='commit@cartify.internal').exists())
         user.delete()
+

@@ -1,31 +1,35 @@
 """Custom standardized exception handler for Django REST Framework."""
 import logging
+from typing import Any, Dict
 from rest_framework.views import exception_handler
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import APIException
 
 logger = logging.getLogger(__name__)
 
 
-def custom_exception_handler(exc, context):
+def custom_exception_handler(exc: Exception, context: Dict[str, Any]) -> Response:
     """
     Standardizes error responses across all Cartify APIs.
-    Structure:
+    
+    Standardized Error Envelope:
     {
         "success": false,
         "message": "Human readable message",
         "errors": {}
     }
-    Prevents leakage of stack traces, internal paths, or database errors.
+    
+    Guarantees that sensitive information such as stack traces, database errors,
+    SQL queries, filesystem paths, and internal credentials are NEVER exposed to clients.
     """
-    # Call REST framework's default exception handler first to get standard response
+    # Call REST framework's default exception handler to get standard HTTP status & detail
     response = exception_handler(exc, context)
 
     if response is not None:
         errors = response.data
-        message = "An error occurred while processing your request."
+        message = "Something went wrong"
 
-        # Extract top-level message if present
         if isinstance(errors, dict):
             if "detail" in errors:
                 message = str(errors["detail"])
@@ -35,16 +39,22 @@ def custom_exception_handler(exc, context):
         elif isinstance(errors, list):
             message = "Validation failed."
             errors = {"non_field_errors": errors}
+        elif isinstance(errors, str):
+            message = errors
+            errors = {"detail": errors}
 
         response.data = {
-            "success": false,
+            "success": False,
             "message": message,
-            "errors": errors,
+            "errors": errors if isinstance(errors, dict) else {"detail": str(errors)},
         }
         return response
 
     # Unhandled exceptions (HTTP 500)
-    logger.exception("Unhandled server exception encountered: %s", exc)
+    # Log full traceback internally for operations/debugging without leaking to clients
+    view = context.get('view')
+    view_name = view.__class__.__name__ if view else 'UnknownView'
+    logger.exception("Unhandled server exception in %s: %s", view_name, exc)
 
     return Response(
         {
